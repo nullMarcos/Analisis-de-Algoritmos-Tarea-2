@@ -7,6 +7,10 @@
 #include <vector>
 #include <algorithm>
 #include <cstddef>
+#include <fstream>
+#include <string>
+
+using namespace std;
 
 template<typename T>
 struct Edge {
@@ -57,5 +61,44 @@ public:
         }
 
         return matrix;
+    }
+
+    //Metodo ara probar los grafos de los datasets en Floyd-Warshall
+    static Graph<T> create_graph_from_file(const string& filename){
+
+        ifstream file(filename);
+
+        if (!file.is_open()){
+            cerr << "Error al abrir el archivo: " << filename << endl;
+            exit(1);
+        }
+
+        //Leemos la cantidad de nodos y aristas
+        size_t nodos_u, nodos_v, aristas;
+        file >> nodos_u >> nodos_v >> aristas;
+
+        //Instancia del grafo en cuestion
+        Graph<T> graph(nodos_u);
+
+        //Leemos las aristas
+        size_t u, v;
+        T w;
+        while (file >> u >> v >> w){
+
+            //Zero indexing
+            u = u - 1;
+            v = v - 1;
+
+            //Agregamos la arista a la lista de aristas
+            graph.addEdge(u, v, w);
+
+            //Como los grafos de los datasets son no dirigidos/simetricos, agregamos la arista inversa
+            if (u != v){
+                graph.addEdge(v, u, w);
+            }
+        }
+
+        file.close();
+        return graph;
     }
 };
