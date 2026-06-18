@@ -63,7 +63,7 @@ public:
         return matrix;
     }
 
-    //Metodo ara probar los grafos de los datasets en Floyd-Warshall
+    //Metodo para probar los grafos de los datasets en Floyd-Warshall
     static Graph<T> create_graph_from_file(const string& filename){
 
         ifstream file(filename);
