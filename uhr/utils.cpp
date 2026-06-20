@@ -12,11 +12,35 @@
 #include <string>
 #include <vector>
 
+#include "../src/generador/GraphGenerator.h"
+
+enum Algoritmo {
+    BELLMANFORD,
+    FLOYD_WARSHALL
+};
+
+// Función auxiliar para convertir el string de la terminal al enum
+Algoritmo stringToAlgoritmo(const std::string& str) {
+    if (str == "BELLMANFORD") return BELLMANFORD;
+    if (str == "FLOYD_WARSHALL") return FLOYD_WARSHALL;
+
+    std::cerr << "Error: Algoritmo desconocido. Usa BELLMANFORD o FLOYD_WARSHALL." << std::endl;
+    std::exit(EXIT_FAILURE);
+}
+
+TipoGrafo stringToTipoGrafo(std::string str) {
+    if (str == "0" || str == "BIPARTITO_COMPLETO")            return BIPARTITO_COMPLETO;
+    if (str == "1" || str == "ARBOL_BINARIO")                 return ARBOL_BINARIO;
+    if (str == "2" || str == "COMPONENTES_FC_CICLO_NEGATIVO") return COMPONENTES_FC_CICLO_NEGATIVO;
+    return BIPARTITO_COMPLETO; // Por defecto
+}
+
 inline void validate_input(int argc, char *argv[], std::int64_t& runs,
-    std::int64_t& lower, std::int64_t& upper, std::int64_t& step)
+    std::int64_t& lower, std::int64_t& upper, std::int64_t& step, TipoGrafo& tipo_grafo, Algoritmo& algoritmo)
 {
-    if (argc != 6) {
-        std::cerr << "Usage: <filename> <RUNS> <LOWER> <UPPER> <STEP>" << std::endl;
+    if (argc != 8) {
+        std::cerr << "Usage: <filename> <RUNS> <LOWER> <UPPER> <STEP> <TIPO> <ALGORITMO>" << std::endl;
+        std::cerr << "TIPO: BIPARTITO_COMPLETO, ARBOL_BINARIO, COMPONENTES_FC_CICLO_NEGATIVO" << std::endl;
         std::cerr << "<filename> is the name of the file where performance data will be written." << std::endl;
         std::cerr << "It is recommended for <filename> to have .csv extension and it should not previously exist." << std::endl;
         std::cerr << "<RUNS>: numbers of runs per test case: should be >= 32." << std::endl;
@@ -30,7 +54,9 @@ inline void validate_input(int argc, char *argv[], std::int64_t& runs,
         runs = std::stoll(argv[2]);
         lower = std::stoll(argv[3]);
         upper = std::stoll(argv[4]);
-        step = std::stoll(argv[5]);
+        step  = std::stoll(argv[5]);
+        tipo_grafo = stringToTipoGrafo(argv[6]);
+        algoritmo = stringToAlgoritmo(argv[7]);
     } catch (std::invalid_argument const& ex) {
         std::cerr << "std::invalid_argument::what(): " << ex.what() << std::endl;
         std::exit(EXIT_FAILURE);

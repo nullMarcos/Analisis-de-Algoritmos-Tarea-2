@@ -1,3 +1,6 @@
+
+#ifndef GRAPH_H
+#define GRAPH_H
 /*
  * Graph.h
  * Lista de aristas para representar un grafo.
@@ -64,7 +67,7 @@ public:
         return matrix;
     }
 
-    //Metodo ara probar los grafos de los datasets en Floyd-Warshall
+    //Metodo para probar los grafos de los datasets en Floyd-Warshall
     static pair<Graph<T>, bool> create_graph_from_file(const string& filename, bool is_directed){
 
         ifstream file(filename);
@@ -123,3 +126,4 @@ public:
         return make_pair(graph, is_one_indexed);
     }
 };
+#endif // GRAPH_H

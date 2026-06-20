@@ -9,15 +9,18 @@
  * 4. Additive or multiplicative stepping,
  * 5. The experiments: in outer for loop. */
 
+// Compilar con: g++ -O3 -std=c++17 uhr/uhr.cpp -o uhr/uhr
+
 #include <cstdint>
 #include <chrono>
 #include <cmath>
 #include <fstream>
 #include <iostream>
-#include <random>
-#include <vector>
 
 #include "utils.cpp"
+#include "../src/algoritmos/APSP_BellmanFord.h"
+#include "../src/algoritmos/Floyd_Warshall.h"
+#include "../src/generador/GraphGenerator.h"
 
 // Include to be tested files here
 
@@ -25,7 +28,9 @@ int main(int argc, char *argv[])
 {
     // Validate and sanitize input
     std::int64_t runs, lower, upper, step;
-    validate_input(argc, argv, runs, lower, upper, step);
+    TipoGrafo tipo_grafo;
+    Algoritmo algoritmo;
+    validate_input(argc, argv, runs, lower, upper, step, tipo_grafo, algoritmo);
 
     // Set up clock variables
     std::int64_t n, i, executed_runs;
@@ -46,7 +51,7 @@ int main(int argc, char *argv[])
     // File to write time data
     std::ofstream time_data;
     time_data.open(argv[1]);
-    time_data << "n,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4" << std::endl;
+    time_data << "algoritmo,tipo_grafo,n,m,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4" << std::endl;
 
     // Begin testing
     std::cerr << "\033[0;36mRunning tests...\033[0m" << std::endl << std::endl;
@@ -56,14 +61,32 @@ int main(int argc, char *argv[])
         time_stdev = 0;
 
         // Test configuration goes here
+        // Generamos un grafo con n vertices
+        Graph G = fabricar_grafo<double>(tipo_grafo, n);
+        const auto& edges = G.getEdgeList(); // lista de aristas para Bellman-Ford
+
+        // Parámetros para Floyd-Warshall
+        const double inf = 1e15; // infinito
+        auto matrix_base = G.toAdjacencyMatrix(inf); // Matriz base
 
         // Run to compute elapsed time
         for (i = 0; i < runs; i++) {
             // Remember to change total depending on step type
             display_progress(++executed_runs, total_runs_additive);
 
+            // Para Floyd-Warshall debemos hacer una copia de la matriz base
+            // ya que modifica la matriz original in-place
+            auto matrix_copia = matrix_base;
             begin_time = std::chrono::high_resolution_clock::now();
             // Function to test goes here
+            switch(algoritmo) {
+                case BELLMANFORD:
+                    apspBellmanFord(edges, n);
+                    break;
+                case FLOYD_WARSHALL:
+                    floyd_warshall(matrix_copia, inf);
+                    break;
+            }
             end_time = std::chrono::high_resolution_clock::now();
 
             elapsed_time = end_time - begin_time;
@@ -85,7 +108,26 @@ int main(int argc, char *argv[])
 
         quartiles(times, q);
 
-        time_data << n << "," << mean_time << "," << time_stdev << ",";
+        // Obtener la cantidad real de aristas
+        std::size_t m = edges.size();
+
+        // Convertir en string para el CSV
+        std::string alg_name = (algoritmo == BELLMANFORD) ? "Bellman-Ford" : "Floyd-Warshall";
+        std::string graph_name;
+        switch (tipo_grafo){
+            case BIPARTITO_COMPLETO:
+                graph_name = "Bipartito Completo";
+                break;
+            case ARBOL_BINARIO:
+                graph_name = "Árbol Binario";
+                break;
+            case COMPONENTES_FC_CICLO_NEGATIVO:
+                graph_name = "Componentes FC Ciclo Negativo";
+                break;
+        }
+
+        // Escribir fila en el CSV
+        time_data << alg_name << "," << graph_name << "," << n << "," << m << "," << mean_time << "," << time_stdev << ",";
         time_data << q[0] << "," << q[1] << "," << q[2] << "," << q[3] << "," << q[4] << std::endl;
     }
 
