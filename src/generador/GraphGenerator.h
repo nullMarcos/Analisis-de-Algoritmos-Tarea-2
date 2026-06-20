@@ -7,7 +7,7 @@
 
 enum TipoGrafo {
     BIPARTITO_COMPLETO,
-    ARBOL_BINARIO
+    ARBOL_BINARIO,
     COMPONENTES_FC_CICLO_NEGATIVO
     // Puedes agregar más tipos aquí como COMPLETO, ESTRELLA, CICLO, etc.
 };

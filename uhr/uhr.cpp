@@ -9,15 +9,18 @@
  * 4. Additive or multiplicative stepping,
  * 5. The experiments: in outer for loop. */
 
+// Compilar con: g++ -O3 -std=c++17 uhr/uhr.cpp -o uhr/uhr
+
 #include <cstdint>
 #include <chrono>
 #include <cmath>
 #include <fstream>
 #include <iostream>
-#include <random>
-#include <vector>
 
 #include "utils.cpp"
+#include "../src/algoritmos/BellmanFord.h"
+#include "../src/algoritmos/Floyd_Warshall.h"
+#include "../src/generador/GraphGenerator.h"
 
 // Include to be tested files here
 
@@ -25,7 +28,9 @@ int main(int argc, char *argv[])
 {
     // Validate and sanitize input
     std::int64_t runs, lower, upper, step;
-    validate_input(argc, argv, runs, lower, upper, step);
+    TipoGrafo tipo_grafo;
+    Algoritmo algoritmo;
+    validate_input(argc, argv, runs, lower, upper, step, tipo_grafo, algoritmo);
 
     // Set up clock variables
     std::int64_t n, i, executed_runs;
@@ -51,19 +56,37 @@ int main(int argc, char *argv[])
     // Begin testing
     std::cerr << "\033[0;36mRunning tests...\033[0m" << std::endl << std::endl;
     executed_runs = 0;
-    for (n = lower; n <= upper; n += step) {
+    for (n = lower; n <= upper; n += step) { 
         mean_time = 0;
         time_stdev = 0;
 
         // Test configuration goes here
+        // Generamos un grafo con n vertices
+        Graph G = fabricar_grafo<double>(tipo_grafo, n);
+        const auto& edges = G.getEdgeList(); // lista de aristas para Bellman-Ford
+        
+        // Parámetros para Floyd-Warshall
+        const double inf = 1e15; // infinito 
+        auto matrix_base = G.toAdjacencyMatrix(inf); // Matriz base
 
         // Run to compute elapsed time
         for (i = 0; i < runs; i++) {
             // Remember to change total depending on step type
             display_progress(++executed_runs, total_runs_additive);
 
+            // Para Floyd-Warshall debemos hacer una copia de la matriz base
+            // ya que modifica la matriz original in-place
+            auto matrix_copia = matrix_base;
             begin_time = std::chrono::high_resolution_clock::now();
             // Function to test goes here
+            switch(algoritmo) {
+                case BELLMANFORD:
+                    bellmanFord(edges, n, 0);
+                    break;
+                case FLOYD_WARSHALL:
+                    floyd_warshall(matrix_copia, inf);
+                    break;
+            }
             end_time = std::chrono::high_resolution_clock::now();
 
             elapsed_time = end_time - begin_time;

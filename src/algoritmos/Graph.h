@@ -1,3 +1,6 @@
+
+#ifndef GRAPH_H
+#define GRAPH_H
 /*
  * Graph.h
  * Lista de aristas para representar un grafo.
@@ -102,3 +105,4 @@ public:
         return graph;
     }
 };
+#endif // GRAPH_H

@@ -1,9 +1,10 @@
+#ifndef BELLMAN_FORD_H
+#define BELLMAN_FORD_H
+
 #include <iostream>
 #include <vector>
 #include <limits>
 #include <algorithm>
-
-#include "Graph.h"
 
 template<typename T>
 struct BellmanFordResult {
@@ -58,3 +59,4 @@ BellmanFordResult<T> bellmanFord(const std::vector<Edge<T>>& edges, std::size_t 
 
     return { dist, parent, negativeCycle };
 }
+#endif // BELLMAN_FORD_H
