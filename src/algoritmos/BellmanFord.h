@@ -5,6 +5,7 @@
 #include <vector>
 #include <limits>
 #include <algorithm>
+#include "Graph.h"
 
 template<typename T>
 struct BellmanFordResult {
