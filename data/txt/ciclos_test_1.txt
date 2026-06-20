@@ -1,0 +1,5 @@
+Tiempo de ejecucion (ms): 0
+Ciclo negativo: Si
+INF se define como: 1e+15
+[1, 2, 3]: 1 -> 2 -> 3 -> 1
+[7, 8]: 7 -> 8 -> 7
