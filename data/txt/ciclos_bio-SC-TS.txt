@@ -1,0 +1,3 @@
+Tiempo de ejecucion (ms): 1143
+Ciclo negativo: No
+INF se define como: 1e+15

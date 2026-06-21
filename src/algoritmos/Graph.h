@@ -12,6 +12,7 @@
 #include <cstddef>
 #include <fstream>
 #include <string>
+#include <utility>
 
 using namespace std;
 
@@ -64,7 +65,7 @@ public:
     }
 
     //Metodo para probar los grafos de los datasets en Floyd-Warshall
-    static Graph<T> create_graph_from_file(const string& filename){
+    static pair<Graph<T>, bool> create_graph_from_file(const string& filename, bool is_directed){
 
         ifstream file(filename);
 
@@ -81,25 +82,45 @@ public:
         Graph<T> graph(nodos_u);
 
         //Leemos las aristas
-        size_t u, v;
+        long long u, v;
         T w;
-        while (file >> u >> v >> w){
 
-            //Zero indexing
+        //Agregamos una flag puesto que un archivo es zero-indexed y el otro es one-indexed.
+        //Esta flag funcion asumiendo que los el primer par de vertices indica si es one o zero indexed (que es el caso de los archivos en cuestion).
+        bool is_one_indexed = true;
+
+        //Lectura de la primera fila
+        file >> u >> v >> w;
+
+        //Chequeo de zero-indexed
+        if (u == 0 || v == 0){
+            is_one_indexed = false;
+        }
+        
+        //Agregamos la primera arista segun corresponda, si el dataset está one-indexed entonces se transforma a zero-indexed
+        if (is_one_indexed){
             u = u - 1;
             v = v - 1;
+        }
+        graph.addEdge(u, v, w);
+
+        if (u != v && !is_directed) graph.addEdge(v, u, w);
+
+        while (file >> u >> v >> w){
 
             //Agregamos la arista a la lista de aristas
+            if (is_one_indexed){
+                u = u - 1;
+                v = v - 1;
+            }
             graph.addEdge(u, v, w);
 
             //Como los grafos de los datasets son no dirigidos/simetricos, agregamos la arista inversa
-            if (u != v){
-                graph.addEdge(v, u, w);
-            }
+            if (u != v && !is_directed) graph.addEdge(v, u, w);
         }
 
         file.close();
-        return graph;
+        return make_pair(graph, is_one_indexed);
     }
 };
 #endif // GRAPH_H
