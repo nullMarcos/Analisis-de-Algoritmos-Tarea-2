@@ -15,7 +15,6 @@ struct BellmanFordResult {
 };
 
 template<typename T>
-// En caso de pasarle un grafo completo -> BellmanFordResult<T> bellmanFord(const Graph<T>& g, std::size_t source)
 BellmanFordResult<T> bellmanFord(const std::vector<Edge<T>>& edges, std::size_t num_nodes, std::size_t source) {
     // Inicialización
     // - Todos los nodos tienen distancia infinita ya que el algoritmo aún no sabe cómo llegar a ellos.

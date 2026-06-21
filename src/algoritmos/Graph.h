@@ -28,10 +28,7 @@ public:
     std::size_t n;              // Número de nodos
     std::vector<Edge<T>> edges; // Lista de aristas
 
-    // Constructor "explicit" para evitar conversiones implícitas
-    // Implicita quiere decir que el constructor puede ser llamado con un
-    // argumento de tipo diferente al esperado.
-    explicit Graph(std::size_t n): n(n) {}
+    Graph(std::size_t n): n(n) {}
 
     // Método para conectar el nodo u al nodo v con peso w
     void addEdge(std::size_t u, std::size_t v, T w) {
