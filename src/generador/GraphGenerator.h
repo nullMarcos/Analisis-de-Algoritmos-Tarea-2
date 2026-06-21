@@ -4,6 +4,7 @@
 #include "../algoritmos/Graph.h"
 #include <random>
 #include <vector>
+#include <cmath>
 
 enum TipoGrafo {
     BIPARTITO_COMPLETO,
@@ -12,8 +13,23 @@ enum TipoGrafo {
     // Puedes agregar más tipos aquí como COMPLETO, ESTRELLA, CICLO, etc.
 };
 
+enum DistribucionPesos{
+    DECIMAL,
+    ENTERA
+};
+
+inline double generar_peso_aleatorio(DistribucionPesos dist, std::mt19937& gen) {
+    if (dist == DECIMAL) {
+        std::uniform_real_distribution<double> dis_dec(0.0000001, 1.0);
+        return dis_dec(gen);
+    } else {
+        std::uniform_int_distribution<int> dis_ent(1, 20);
+        return dis_ent(gen);
+    }
+}
+
 template <typename T>
-Graph<T> fabricar_grafo(TipoGrafo tipo, int n) {
+Graph<T> fabricar_grafo(TipoGrafo tipo, int n, DistribucionPesos distribucion) {
     // Instanciamos el grafo con n nodos
     Graph<T> grafo(n);
 
@@ -21,18 +37,15 @@ Graph<T> fabricar_grafo(TipoGrafo tipo, int n) {
     std::random_device rd;
     std::mt19937 gen(rd());
     
-    // Asumiendo que quieres pesos entre 1.0 y 20.0. 
-    std::uniform_real_distribution<> dis(1.0, 20.0);
-
-    // Genera un 0 o un 1 (como cara o cruz)
-    std::uniform_int_distribution<> dis_signo(0, 1);
+    // Genera un 0 o un 1
+    std::uniform_int_distribution<int> dis_signo(0, 1);
         
     switch(tipo) {
         case BIPARTITO_COMPLETO: {
             int mitad = n/2;
             for(int i=0; i < mitad; i++){
                 for(int j = mitad; j < n; j++){
-                    double peso = dis(gen);
+                    double peso = generar_peso_aleatorio(distribucion, gen);
                     if(dis_signo(gen)){
                         peso = -peso;
                     }
@@ -40,7 +53,6 @@ Graph<T> fabricar_grafo(TipoGrafo tipo, int n) {
                     grafo.addEdge(j, i, peso);
                 }
             }
-            
             break;
         }
 
@@ -50,13 +62,19 @@ Graph<T> fabricar_grafo(TipoGrafo tipo, int n) {
                 int hijo_derecho = 2 * i + 2;
 
                 if(hijo_izquierdo < n) {
-                    double peso = dis(gen);
+                    double peso = generar_peso_aleatorio(distribucion, gen);
+                    if(dis_signo(gen)) {
+                        peso = -peso;
+                    }
                     // Arista dirigida: del padre al hijo (Out-tree)
                     grafo.addEdge(i, hijo_izquierdo, peso); 
                 }
 
                 if(hijo_derecho < n) {
-                    double peso = dis(gen);
+                    double peso = generar_peso_aleatorio(distribucion, gen);
+                    if(dis_signo(gen)) {
+                        peso = -peso;
+                    }
                     // Arista dirigida: del padre al hijo (Out-tree)
                     grafo.addEdge(i, hijo_derecho, peso);
                 }
@@ -88,11 +106,11 @@ Graph<T> fabricar_grafo(TipoGrafo tipo, int n) {
                 for (size_t i = 0; i < nodos.size(); ++i) {
                     for (size_t j = 0; j < nodos.size(); ++j) {
                         if (i != j) {
-                            double peso = dis(gen); 
+                            double peso = generar_peso_aleatorio(distribucion, gen); 
                             
                             // Si es el grupo elegido para el ciclo negativo, forzamos pesos negativos
                             if (es_el_negativo) {
-                                peso = -peso; 
+                                peso = -std::abs(peso); 
                             } 
                             grafo.addEdge(nodos[i], nodos[j], peso);
                         }
@@ -109,8 +127,9 @@ Graph<T> fabricar_grafo(TipoGrafo tipo, int n) {
                 int u = grupos[i][dis_nodo_origen(gen)];
                 int v = grupos[i+1][dis_nodo_destino(gen)];
                 
-                // Se conectan los grupos
-                grafo.addEdge(u, v, dis(gen));
+                // Se conectan los grupos (y garantizamos que el puente sea estrictamente positivo con std::abs)
+                double peso_puente = generar_peso_aleatorio(distribucion, gen);
+                grafo.addEdge(u, v, std::abs(peso_puente));
                 
                 // Se puentea grupo i con grupo i+2 con cierta probabilidad
                 for (size_t j = i + 2; j < grupos.size(); ++j) {
@@ -119,7 +138,9 @@ Graph<T> fabricar_grafo(TipoGrafo tipo, int n) {
                         std::uniform_int_distribution<> dis_v(0, grupos[j].size() - 1);
                         int u_extra = grupos[i][dis_nodo_origen(gen)];
                         int v_extra = grupos[j][dis_v(gen)];
-                        grafo.addEdge(u_extra, v_extra, dis(gen));
+                        
+                        double peso_puente_extra = generar_peso_aleatorio(distribucion, gen);
+                        grafo.addEdge(u_extra, v_extra, std::abs(peso_puente_extra));
                     }
                 }
             }

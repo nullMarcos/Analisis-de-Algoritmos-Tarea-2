@@ -35,12 +35,19 @@ TipoGrafo stringToTipoGrafo(std::string str) {
     return BIPARTITO_COMPLETO; // Por defecto
 }
 
+DistribucionPesos stringToDistribucion(std::string str) {
+    if (str == "ENTERA") return ENTERA;
+    if (str == "DECIMAL") return DECIMAL;
+    return DECIMAL; // Por defecto
+}
+
 inline void validate_input(int argc, char *argv[], std::int64_t& runs,
-    std::int64_t& lower, std::int64_t& upper, std::int64_t& step, TipoGrafo& tipo_grafo, Algoritmo& algoritmo)
+    std::int64_t& lower, std::int64_t& upper, std::int64_t& step, TipoGrafo& tipo_grafo, Algoritmo& algoritmo, DistribucionPesos& distribucion)
 {
-    if (argc != 8) {
-        std::cerr << "Usage: <filename> <RUNS> <LOWER> <UPPER> <STEP> <TIPO> <ALGORITMO>" << std::endl;
+    if (argc != 9) {
+        std::cerr << "Usage: <filename> <RUNS> <LOWER> <UPPER> <STEP> <TIPO> <ALGORITMO> <DISTRIBUCION>" << std::endl;
         std::cerr << "TIPO: BIPARTITO_COMPLETO, ARBOL_BINARIO, COMPONENTES_FC_CICLO_NEGATIVO" << std::endl;
+        std::cerr << "DISTRIBUCION: DECIMAL, ENTERA" << std::endl;
         std::cerr << "<filename> is the name of the file where performance data will be written." << std::endl;
         std::cerr << "It is recommended for <filename> to have .csv extension and it should not previously exist." << std::endl;
         std::cerr << "<RUNS>: numbers of runs per test case: should be >= 32." << std::endl;
@@ -57,6 +64,7 @@ inline void validate_input(int argc, char *argv[], std::int64_t& runs,
         step  = std::stoll(argv[5]);
         tipo_grafo = stringToTipoGrafo(argv[6]);
         algoritmo = stringToAlgoritmo(argv[7]);
+        distribucion = stringToDistribucion(argv[8]);
     } catch (std::invalid_argument const& ex) {
         std::cerr << "std::invalid_argument::what(): " << ex.what() << std::endl;
         std::exit(EXIT_FAILURE);

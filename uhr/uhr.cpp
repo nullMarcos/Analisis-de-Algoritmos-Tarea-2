@@ -30,7 +30,8 @@ int main(int argc, char *argv[])
     std::int64_t runs, lower, upper, step;
     TipoGrafo tipo_grafo;
     Algoritmo algoritmo;
-    validate_input(argc, argv, runs, lower, upper, step, tipo_grafo, algoritmo);
+    DistribucionPesos distribucion;
+    validate_input(argc, argv, runs, lower, upper, step, tipo_grafo, algoritmo, distribucion);
 
     // Set up clock variables
     std::int64_t n, i, executed_runs;
@@ -51,7 +52,7 @@ int main(int argc, char *argv[])
     // File to write time data
     std::ofstream time_data;
     time_data.open(argv[1]);
-    time_data << "algoritmo,tipo_grafo,n,m,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4" << std::endl;
+    time_data << "algoritmo,tipo_grafo,distribucion,n,m,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4" << std::endl;
 
     // Begin testing
     std::cerr << "\033[0;36mRunning tests...\033[0m" << std::endl << std::endl;
@@ -62,7 +63,7 @@ int main(int argc, char *argv[])
 
         // Test configuration goes here
         // Generamos un grafo con n vertices
-        Graph G = fabricar_grafo<double>(tipo_grafo, n);
+        Graph G = fabricar_grafo<double>(tipo_grafo, n, distribucion);
         const auto& edges = G.getEdgeList(); // lista de aristas para Bellman-Ford
 
         // Parámetros para Floyd-Warshall
@@ -83,9 +84,11 @@ int main(int argc, char *argv[])
                 case BELLMANFORD:
                     apspBellmanFord(edges, n);
                     break;
-                case FLOYD_WARSHALL:
-                    floyd_warshall(matrix_copia, inf);
+                case FLOYD_WARSHALL: {
+                    std::vector<std::vector<int>> next_node(n, std::vector<int>(n, -1));
+                    floyd_warshall(matrix_copia, next_node, inf);
                     break;
+                }
             }
             end_time = std::chrono::high_resolution_clock::now();
 
@@ -126,8 +129,10 @@ int main(int argc, char *argv[])
                 break;
         }
 
+        std::string dist_name = (distribucion == DECIMAL) ? "Decimal" : "Entera";
+
         // Escribir fila en el CSV
-        time_data << alg_name << "," << graph_name << "," << n << "," << m << "," << mean_time << "," << time_stdev << ",";
+        time_data << alg_name << "," << graph_name << "," << dist_name << "," << n << "," << m << "," << mean_time << "," << time_stdev << ",";
         time_data << q[0] << "," << q[1] << "," << q[2] << "," << q[3] << "," << q[4] << std::endl;
     }
 
