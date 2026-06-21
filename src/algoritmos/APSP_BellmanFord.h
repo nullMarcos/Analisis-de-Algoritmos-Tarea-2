@@ -2,7 +2,6 @@
 #define APSP_BELLMANFORD_H
 
 #include "BellmanFord.h"
-#include "Graph.h"
 
 // Estructura para almacenar el resultado de APSP (Matrices n x n)
 template<typename T>
@@ -27,10 +26,8 @@ APSPResult<T> apspBellmanFord(const std::vector<Edge<T>>& edges, std::size_t num
         // Problema SSSP, pero se repite para cada nodo 'u' como origen
         BellmanFordResult<T> bf_res = bellmanFord(edges, num_nodes, u);
 
-        // Si una sola ejecución detecta un ciclo negativo, APSP no está definido
         if (bf_res.hasNegativeCycle) {
             result.hasNegativeCycle = true;
-            break;
         }
 
         // Mover los datos a las filas de la matriz

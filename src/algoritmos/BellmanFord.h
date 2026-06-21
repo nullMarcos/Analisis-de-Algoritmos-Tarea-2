@@ -5,6 +5,7 @@
 #include <vector>
 #include <limits>
 #include <algorithm>
+#include <queue>
 #include "Graph.h"
 
 template<typename T>
@@ -46,14 +47,49 @@ BellmanFordResult<T> bellmanFord(const std::vector<Edge<T>>& edges, std::size_t 
         if (!changed) break;
     }
 
-    // Verificamos si hay un ciclo de peso negativo
+    // Verificamos si hay un ciclo de peso negativo y marcamos los nodos afectados
     bool negativeCycle = false;
+    std::vector<bool> affected(num_nodes, false);
     for (const auto& e : edges) {
         if (dist[e.u] == INF) continue;
         // Si alguna distancia vuelve a bajar, significa que hay un ciclo de peso negativo
         if (dist[e.u] + e.w < dist[e.v]) {
             negativeCycle = true;
-            break;
+            affected[e.v] = true; // 'v' aún se relaja => está contaminado por un ciclo negativo
+        }
+    }
+
+    if(negativeCycle) {
+        // Propagamos la contaminación: cualquier nodo alcanzable desde un nodo
+        // afectado también tiene distancia -infinito.
+        // La propagación es hacia adelante por las aristas (u -> v),
+        // no hacia atrás, y no depende de si el nodo es alcanzable desde 'source'.
+        std::queue<std::size_t> q;
+        for (std::size_t i = 0; i < num_nodes; ++i) {
+            if (affected[i]) q.push(i);
+        }
+
+        while (!q.empty()) {
+            std::size_t a = q.front();
+            q.pop();
+            for (const auto& e : edges) {
+                if (e.u == a && !affected[e.v]) {
+                    affected[e.v] = true;
+                    q.push(e.v);
+                }
+            }
+        }
+
+        // Aplicamos -INF únicamente a los nodos realmente contaminados.
+        // Los nodos con dist == INF (inalcanzables desde source) o finitos
+        // pero no afectados (alcanzables desde source sin pasar por el ciclo)
+        // se quedan exactamente como estaban.
+        const T NEG_INF = std::numeric_limits<T>::lowest();
+        for (std::size_t v = 0; v < num_nodes; ++v) {
+            if (affected[v]) {
+                dist[v] = NEG_INF;
+                parent[v] = -1;
+            }
         }
     }
 
