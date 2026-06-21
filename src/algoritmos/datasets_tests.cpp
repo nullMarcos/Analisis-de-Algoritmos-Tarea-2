@@ -3,37 +3,42 @@
 #include <chrono>
 #include <fstream>
 #include <string>
+#include <limits>
 
-#include "Graph.h"
 #include "Floyd_Warshall.h"
+#include "APSP_BellmanFord.h"
 
 using namespace std;
 using namespace std::chrono;
 
 int main(int argc, char* argv[]){
 
-    if(argc < 3){
+    if(argc < 4){
         cout << "Error: Faltan parametros.\n";
-        cout << "Uso: " << "./Ejecutable" << " <archivo.mtx / archivo.edge> <1 para dirigido / 0 para no dirigido>.\n";
+        cout << "Uso: " << "./Ejecutable" << " <archivo.mtx / archivo.edge> <1 para dirigido / 0 para no dirigido>" << "<algoritmo: fw/bf>\n";
         return 1;
     }
 
     //Captura de los argumentos de la terminal
     string file_name = argv[1];
     bool is_directed = string(argv[2]) == "1";
+    string algorithm = argv[3];
+
+    if(algorithm != "fw" && algorithm != "bf"){
+        cout << "Error: Algoritmo no valido.\n";
+        cout << "Uso: " << "./Ejecutable" << " <archivo.mtx / archivo.edge> <1 para dirigido / 0 para no dirigido>" << "<algoritmo: fw/bf>\n";
+        return 1;
+    }
 
     size_t point_posicion = file_name.find_last_of('.');
     string base_name = file_name.substr(0, point_posicion);
 
     string ruta_dataset = "../../data/dataset/" + file_name;
-    string ruta_csv     = "../../data/csv/resultados_" + base_name + ".csv";
-    string ruta_txt     = "../../data/txt/ciclos_" + base_name + ".txt";
+    string ruta_csv     = "../../data/csv/resultados_" + algorithm + "_" + base_name + ".csv";
+    string ruta_txt     = "../../data/txt/ciclos_" + algorithm + "_" + base_name + ".txt";
 
     //Declaracion de lo que se considera infinito
     double inf = 1e15;
-
-    //CICLO PRINCIPAL PARA ITERAR SOBRE CADA ARCHIVO
-    // for (size_t i = 0; i < file_names.size(); i++){
 
     //Cargamos el grafo a partir del archivo
     pair<Graph<double>, bool> result = Graph<double>::create_graph_from_file(ruta_dataset, is_directed);
@@ -42,6 +47,9 @@ int main(int argc, char* argv[]){
     Graph<double> graph = result.first;
     bool is_one_indexed = result.second;
 
+    //Obtener la lista de aristas
+    vector<Edge<double>> edges = graph.getEdgeList();
+    
     //Obtenemos la matriz de adyacencia para la ejecucion del algoritmo
     vector<vector<double>> matrix = graph.toAdjacencyMatrix(inf);
 
@@ -50,13 +58,37 @@ int main(int argc, char* argv[]){
     vector<vector<int>> next_node(n, vector<int>(n, -1));
 
     //Ejecucion y medicion del tiempo del algoritmo
-    cout << "Ejecutando Floyd-Warshall para el dataset: " << ruta_dataset << endl;
+    cout << "Ejecutando " + algorithm + " para el dataset: " << ruta_dataset << endl;
 
     auto start = high_resolution_clock::now();
 
-    bool succes = floyd_warshall(matrix, next_node, inf);
+    bool succes = true;
+    APSPResult<double> bf_res;
+    if(algorithm == "fw"){
+        succes = floyd_warshall(matrix, next_node, inf);
+    }else{
+        bf_res = apspBellmanFord(edges, n);
+        succes = !bf_res.hasNegativeCycle;
+    }   
 
     auto end = high_resolution_clock::now();
+
+    // Si ejecutamos Bellman-Ford, transcribimos los resultados a la matriz
+    // para que la salida CSV los use, normalizando sus valores de infinito
+    if(algorithm == "bf"){
+        for (size_t u = 0; u < n; ++u) {
+            for (size_t v = 0; v < n; ++v) {
+                double val = bf_res.dist[u][v];
+                if (val == numeric_limits<double>::max()) {
+                    matrix[u][v] = inf;
+                } else if (val == numeric_limits<double>::lowest()) {
+                    matrix[u][v] = -inf;
+                } else {
+                    matrix[u][v] = val;
+                }
+            }
+        }
+    }
 
     //Calculo del tiempo de ejecucion
     auto duration = duration_cast<milliseconds>(end - start);
@@ -86,52 +118,57 @@ int main(int argc, char* argv[]){
 
 
     //Ciclo for para la deteccion de CFC, impresión y propagacion de -INF
-    for(size_t k = 0; k < n; k++){
-        
-        //Si el nodo k pertenece a un ciclo negativo
-        if(matrix[k][k] < 0){
+    if(algorithm == "fw"){
+        for(size_t k = 0; k < n; k++){
+            //Si el nodo k pertenece a un ciclo negativo
+            if(matrix[k][k] < 0){
 
-            //Si el nodo aun no ha sido visistado imprimimos el ciclo para esta componente conexa
-            if(!reported[k]){
-                vector<int> cycle;
-                vector<int> cfc;
-                int current = k;
+                //Si el nodo aun no ha sido visistado imprimimos el ciclo para esta componente conexa
+                if(!reported[k]){
+                    vector<int> cycle;
+                    vector<int> cfc;
+                    int current = k;
 
-                //Reconstruccion del ciclo
-                do{
+                    //Reconstruccion del ciclo
+                    do{
+                        cycle.push_back(current);
+                        current = next_node[current][k];
+                    }while(current != k && current != -1);
                     cycle.push_back(current);
-                    current = next_node[current][k];
-                }while(current != k && current != -1);
-                cycle.push_back(current);
 
-                //Marcamos todos los vertices de esta CFC como visitados
+                    //Marcamos todos los vertices de esta CFC como visitados
+                    for(size_t u = 0; u < n; u++){
+                        //Condicion de CFC
+                        if(matrix[k][u] != inf && matrix[u][k] != inf){
+                            reported[u] = true;
+                            cfc.push_back(u);
+                        }
+                    }
+
+                    //Imprimimos el ciclo para esta CFC en el archivo txt
+                    txt_file << "[";
+                    for(size_t v = 0; v < cfc.size(); v++){
+                        txt_file << cfc[v] + ajuste << (v < cfc.size() - 1 ? ", " : "");
+                    }
+                    txt_file << "]: ";
+                    for (size_t v = 0; v < cycle.size(); v++) {
+                        txt_file << cycle[v] + ajuste << (v < cycle.size() - 1 ? " -> " : "");
+                    }
+                    txt_file << "\n";
+                }
+
+                //Propagacion de -INF: Si k está en un ciclo negativo entonces todos los vertices i y j que puedan conectarse a traves de k estan unidos por un camino arbitrariamente corto
                 for(size_t u = 0; u < n; u++){
-                    //Condicion de CFC
-                    if(matrix[k][u] != inf && matrix[u][k] != inf){
-                        reported[u] = true;
-                        cfc.push_back(u);
+                    for(size_t v = 0; v < n; v++){
+                        //Si i puede llegar hasta k y k puede llegar hasta j
+                        if(matrix[u][k] != inf && matrix[k][v] != inf) matrix[u][v] = -inf;
                     }
                 }
-
-                //Imprimimos el ciclo para esta CFC en el archivo txt
-                txt_file << "[";
-                for(size_t v = 0; v < cfc.size(); v++){
-                    txt_file << cfc[v] + ajuste << (v < cfc.size() - 1 ? ", " : "");
-                }
-                txt_file << "]: ";
-                for (size_t v = 0; v < cycle.size(); v++) {
-                    txt_file << cycle[v] + ajuste << (v < cycle.size() - 1 ? " -> " : "");
-                }
-                txt_file << "\n";
             }
-
-            //Propagacion de -INF: Si k está en un ciclo negativo entonces todos los vertices i y j que puedan conectarse a traves de k estan unidos por un camino arbitrariamente corto
-            for(size_t u = 0; u < n; u++){
-                for(size_t v = 0; v < n; v++){
-                //Si i puede llegar hasta k y k puede llegar hasta j
-                if(matrix[u][k] != inf && matrix[k][v] != inf) matrix[u][v] = -inf;
-                }
-            }
+        }
+    } else {
+        if (!succes) {
+            txt_file << "Nota: Se detecto un ciclo negativo. Las distancias hacia los nodos afectados se reportan como -INF.\n";
         }
     }
     txt_file.close();

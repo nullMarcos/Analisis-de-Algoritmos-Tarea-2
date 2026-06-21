@@ -1,3 +1,6 @@
 src/algoritmos/datasets_tests
-data/txt/ciclos_power-685-bus.txt
-data/txt/ciclos_bio-SC-TS.txt
+src/algoritmos/datasets_tests_bf
+data/txt/*
+data/csv/*
+uhr/uhr
+src/algoritmos/datasets_tests
