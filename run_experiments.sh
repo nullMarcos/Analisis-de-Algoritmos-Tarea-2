@@ -7,7 +7,7 @@ algoritmos=("BELLMANFORD" "FLOYD_WARSHALL")
 for tipo_grafo in "${tipo_grafos[@]}"; do
     for algoritmo in "${algoritmos[@]}"; do
         for distribucion in "${distribucion_pesos[@]}"; do
-            ./uhr/uhr resultados/csv/resultados_"$tipo_grafo"_"$algoritmo".csv 5 10 20 2 "$tipo_grafo" "$algoritmo" "$distribucion"
+            ./uhr/uhr resultados/csv/resultados_"$tipo_grafo"_"$distribucion"_"$algoritmo".csv 4 300 300 100 "$tipo_grafo" "$algoritmo" "$distribucion"
         done
     done
 done
