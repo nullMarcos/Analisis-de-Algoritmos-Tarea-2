@@ -16,14 +16,22 @@ struct BellmanFordResult {
 };
 
 template<typename T>
-BellmanFordResult<T> bellmanFord(const std::vector<Edge<T>>& edges, std::size_t num_nodes, std::size_t source) {
+BellmanFordResult<T> bellmanFord(
+    const std::vector<Edge<T>>& edges, 
+    const std::vector<std::vector<std::size_t>>& adj_indices,
+    std::size_t num_nodes, 
+    std::size_t source,
+    std::vector<T>& dist, 
+    std::vector<int>& parent,
+    bool& negativeCycle
+) {
     // Inicialización
     // - Todos los nodos tienen distancia infinita ya que el algoritmo aún no sabe cómo llegar a ellos.
     // - Nadie tiene un padre (-1) porque no hay un camino conocido para llegar a ellos todavía.
     // - La distancia del nodo origen es 0 porque es el punto de partida.
     const T INF = std::numeric_limits<T>::max();
-    std::vector<T> dist(num_nodes, INF);
-    std::vector<int> parent(num_nodes, -1);
+    std::fill(dist.begin(), dist.end(), INF);
+    std::fill(parent.begin(), parent.end(), -1);
     dist[source] = 0;
 
     // Bucle de relajación
@@ -48,7 +56,7 @@ BellmanFordResult<T> bellmanFord(const std::vector<Edge<T>>& edges, std::size_t 
     }
 
     // Verificamos si hay un ciclo de peso negativo y marcamos los nodos afectados
-    bool negativeCycle = false;
+    negativeCycle = false;
     std::vector<bool> affected(num_nodes, false);
     for (const auto& e : edges) {
         if (dist[e.u] == INF) continue;
@@ -72,10 +80,10 @@ BellmanFordResult<T> bellmanFord(const std::vector<Edge<T>>& edges, std::size_t 
         while (!q.empty()) {
             std::size_t a = q.front();
             q.pop();
-            for (const auto& e : edges) {
-                if (e.u == a && !affected[e.v]) {
-                    affected[e.v] = true;
-                    q.push(e.v);
+            for (std::size_t v : adj_indices[a]) {
+                if (!affected[v]) {
+                    affected[v] = true;
+                    q.push(v);
                 }
             }
         }

@@ -21,19 +21,22 @@ APSPResult<T> apspBellmanFord(const std::vector<Edge<T>>& edges, std::size_t num
     result.dist.resize(num_nodes, std::vector<T>(num_nodes, INF));    // Distancias inicializadas a infinito
     result.parent.resize(num_nodes, std::vector<int>(num_nodes, -1)); // Padres inicializados a -1
 
+    // Construir mapa de adyacencia de índices de destino
+    // Se ejecuta una única vez de forma global (no dentro del bucle).
+    std::vector<std::vector<std::size_t>> adj_indices(num_nodes);
+    for (const auto& e : edges) {
+        adj_indices[e.u].push_back(e.v);
+    }
+
     // Bucle principal, utilizar Bellman-Ford desde cada nodo 'u' como origen
     for (std::size_t u = 0; u < num_nodes; ++u) {
+        bool local_cycle = false; 
         // Problema SSSP, pero se repite para cada nodo 'u' como origen
-        BellmanFordResult<T> bf_res = bellmanFord(edges, num_nodes, u);
+        bellmanFord(edges, adj_indices, num_nodes, u, result.dist[u], result.parent[u], local_cycle);
 
-        if (bf_res.hasNegativeCycle) {
+        if (local_cycle) {
             result.hasNegativeCycle = true;
         }
-
-        // Mover los datos a las filas de la matriz
-        // Usamos std::move ya que 'bf_res' va a morir en la siguiente iteración, así evitamos copias costosas.
-        result.dist[u] = std::move(bf_res.dist);
-        result.parent[u] = std::move(bf_res.parent);
     }
 
     return result;
