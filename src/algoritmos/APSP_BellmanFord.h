@@ -12,7 +12,9 @@ struct APSPResult {
 };
 
 template<typename T>
-APSPResult<T> apspBellmanFord(const std::vector<Edge<T>>& edges, std::size_t num_nodes) {
+APSPResult<T> apspBellmanFord(const Graph<T>& G) {
+    const auto& edges = G.getEdgeList();
+    std::size_t num_nodes = G.size();
     APSPResult<T> result;
     result.hasNegativeCycle = false;
 

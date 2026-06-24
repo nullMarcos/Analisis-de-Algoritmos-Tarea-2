@@ -47,15 +47,10 @@ int main(int argc, char* argv[]){
     Graph<double> graph = result.first;
     bool is_one_indexed = result.second;
 
-    //Obtener la lista de aristas
-    vector<Edge<double>> edges = graph.getEdgeList();
-    
-    //Obtenemos la matriz de adyacencia para la ejecucion del algoritmo
+    //Obtenemos la matriz de adyacencia base
     vector<vector<double>> matrix = graph.toAdjacencyMatrix(inf);
-
-    //Creamos una matriz de tamaño nxn repleta de -1's para la matriz de rutas
     size_t n = matrix.size();
-    vector<vector<int>> next_node(n, vector<int>(n, -1));
+    vector<vector<int>> next_node;
 
     //Ejecucion y medicion del tiempo del algoritmo
     cout << "Ejecutando " + algorithm + " para el dataset: " << ruta_dataset << endl;
@@ -65,9 +60,12 @@ int main(int argc, char* argv[]){
     bool succes = true;
     APSPResult<double> bf_res;
     if(algorithm == "fw"){
-        succes = floyd_warshall(matrix, next_node, inf);
+        auto fw_res = floyd_warshall(graph, inf);
+        matrix = fw_res.dist;
+        next_node = fw_res.next_node;
+        succes = fw_res.succes;
     }else{
-        bf_res = apspBellmanFord(edges, n);
+        bf_res = apspBellmanFord(graph);
         succes = !bf_res.hasNegativeCycle;
     }   
 

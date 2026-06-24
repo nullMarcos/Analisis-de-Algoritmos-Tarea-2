@@ -64,29 +64,23 @@ int main(int argc, char *argv[])
         // Test configuration goes here
         // Generamos un grafo con n vertices
         Graph G = fabricar_grafo<double>(tipo_grafo, n, distribucion);
-        const auto& edges = G.getEdgeList(); // lista de aristas para Bellman-Ford
 
         // Parámetros para Floyd-Warshall
         const double inf = 1e15; // infinito
-        auto matrix_base = G.toAdjacencyMatrix(inf); // Matriz base
 
         // Run to compute elapsed time
         for (i = 0; i < runs; i++) {
             // Remember to change total depending on step type
             display_progress(++executed_runs, total_runs_additive);
 
-            // Para Floyd-Warshall debemos hacer una copia de la matriz base
-            // ya que modifica la matriz original in-place
-            auto matrix_copia = matrix_base;
             begin_time = std::chrono::high_resolution_clock::now();
             // Function to test goes here
             switch(algoritmo) {
                 case BELLMANFORD:
-                    apspBellmanFord(edges, n);
+                    apspBellmanFord(G);
                     break;
                 case FLOYD_WARSHALL: {
-                    std::vector<std::vector<int>> next_node(n, std::vector<int>(n, -1));
-                    floyd_warshall(matrix_copia, next_node, inf);
+                    floyd_warshall(G, inf);
                     break;
                 }
             }
@@ -112,7 +106,7 @@ int main(int argc, char *argv[])
         quartiles(times, q);
 
         // Obtener la cantidad real de aristas
-        std::size_t m = edges.size();
+        std::size_t m = G.getEdgeList().size();
 
         // Convertir en string para el CSV
         std::string alg_name = (algoritmo == BELLMANFORD) ? "Bellman-Ford" : "Floyd-Warshall";

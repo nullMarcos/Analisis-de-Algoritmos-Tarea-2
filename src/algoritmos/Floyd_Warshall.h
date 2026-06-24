@@ -3,27 +3,34 @@
 
 #include <vector>
 #include <algorithm>
+#include "Graph.h"
 
 using namespace std;
 
 template<typename T>
+struct FloydWarshallResult {
+    vector<vector<T>> dist;
+    vector<vector<int>> next_node;
+    bool succes;
+};
 
-bool floyd_warshall(vector<vector<T>>& matrix, vector<vector<int>>& next_node, T inf){
+template<typename T>
+FloydWarshallResult<T> floyd_warshall(const Graph<T>& G, T inf){
+    
+    // Generar la matriz de adyacencia de manera interna
+    vector<vector<T>> matrix = G.toAdjacencyMatrix(inf);
     
     //Numero de nodos del grafo
     size_t n = matrix.size();
 
-    //Para que el rastreo de ciclos sea opcional
-    bool track_paths = next_node.size() == n;
+    // Matriz de rutas para Floyd-Warshall
+    vector<vector<int>> next_node(n, vector<int>(n, -1));
 
     //Para poder reportar los ciclos encontrados se debe aplicar una matriz de rutas
-    //Asumiendo que es de tamaño nxn y esta repleta de 1's
-    if(track_paths){
-        for(size_t i = 0; i < n; i++){
-            for(size_t j = 0; j < n; j++){
-                if(matrix[i][j] < inf/2){
-                    next_node[i][j] = j;
-                }
+    for(size_t i = 0; i < n; i++){
+        for(size_t j = 0; j < n; j++){
+            if(matrix[i][j] < inf/2){
+                next_node[i][j] = j;
             }
         }
     }
@@ -41,21 +48,21 @@ bool floyd_warshall(vector<vector<T>>& matrix, vector<vector<int>>& next_node, T
 
                 if(matrix[i][j] > matrix[i][k] + matrix[k][j]){
                     matrix[i][j] = matrix[i][k] + matrix[k][j];
-                    if(track_paths){
-                        next_node[i][j] = next_node[i][k];
-                    }
+                    next_node[i][j] = next_node[i][k];
                 }
             }
         }
     }
 
     //Al finalizar, si un vertice tiene un peso negativo a si mismo, entonces hay un ciclo negativo en el grafo
+    bool succes = true;
     for(size_t i = 0; i < n; i++){
         if(matrix[i][i] < 0){
-            return false;
+            succes = false;
+            break;
         }
     }
-    return true;
+    return { matrix, next_node, succes };
 }
 
 #endif
