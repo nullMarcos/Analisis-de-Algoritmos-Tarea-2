@@ -15,7 +15,7 @@ struct FloydWarshallResult {
 };
 
 template<typename T>
-FloydWarshallResult<T> floyd_warshall(const Graph<T>& G, T inf){
+FloydWarshallResult<T> floyd_warshall(const Graph<T>& G, T inf, bool track_paths){
     
     // Generar la matriz de adyacencia de manera interna
     vector<vector<T>> matrix = G.toAdjacencyMatrix(inf);
@@ -24,7 +24,10 @@ FloydWarshallResult<T> floyd_warshall(const Graph<T>& G, T inf){
     size_t n = matrix.size();
 
     // Matriz de rutas para Floyd-Warshall
-    vector<vector<int>> next_node(n, vector<int>(n, -1));
+    vector<vector<int>> next_node;
+    if(track_paths){
+        next_node.assign(n, vector<int>(n, -1));
+    }
 
     //Para poder reportar los ciclos encontrados se debe aplicar una matriz de rutas
     for(size_t i = 0; i < n; i++){
@@ -48,7 +51,9 @@ FloydWarshallResult<T> floyd_warshall(const Graph<T>& G, T inf){
 
                 if(matrix[i][j] > matrix[i][k] + matrix[k][j]){
                     matrix[i][j] = matrix[i][k] + matrix[k][j];
-                    next_node[i][j] = next_node[i][k];
+                    if(track_paths){
+                        next_node[i][j] = next_node[i][k];
+                    }
                 }
             }
         }
@@ -62,6 +67,7 @@ FloydWarshallResult<T> floyd_warshall(const Graph<T>& G, T inf){
             break;
         }
     }
+    //Si track_paths era falso, next_node simplemente se retorna como un vector vacio.
     return { matrix, next_node, succes };
 }
 
