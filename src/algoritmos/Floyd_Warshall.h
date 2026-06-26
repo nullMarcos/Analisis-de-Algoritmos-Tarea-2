@@ -30,10 +30,12 @@ FloydWarshallResult<T> floyd_warshall(const Graph<T>& G, T inf, bool track_paths
     }
 
     //Para poder reportar los ciclos encontrados se debe aplicar una matriz de rutas
-    for(size_t i = 0; i < n; i++){
-        for(size_t j = 0; j < n; j++){
-            if(matrix[i][j] < inf/2){
-                next_node[i][j] = j;
+    if (track_paths) {
+        for(size_t i = 0; i < n; i++){
+            for(size_t j = 0; j < n; j++){
+                if(matrix[i][j] < inf/2){
+                    next_node[i][j] = j;
+                }
             }
         }
     }

@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
                     apspBellmanFord(G);
                     break;
                 case FLOYD_WARSHALL: {
-                    floyd_warshall(G, inf);
+                    floyd_warshall(G, inf, false);
                     break;
                 }
             }
