@@ -1,0 +1,4 @@
+algoritmo,tipo_grafo,distribucion,n,m,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4
+Bellman-Ford,Bipartito Completo,Entera,100,5000,90.9149,0.683823,90.048,90.4279,90.7578,91.2911,92.9962
+Bellman-Ford,Bipartito Completo,Entera,200,20000,3468.5,16.6043,3428.53,3464.87,3473.73,3480.27,3490.4
+Bellman-Ford,Bipartito Completo,Entera,300,45000,21145.2,144.134,20913,21063.2,21114.2,21299.2,21358.6

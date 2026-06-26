@@ -1,0 +1,11 @@
+algoritmo,tipo_grafo,distribucion,n,m,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4
+Floyd-Warshall,Bipartito Completo,Entera,100,5000,0.730422,0.0334094,0.69825,0.711211,0.717276,0.729765,0.829078
+Floyd-Warshall,Bipartito Completo,Entera,200,20000,5.34929,0.167907,5.0933,5.22531,5.30075,5.42605,5.78288
+Floyd-Warshall,Bipartito Completo,Entera,300,45000,17.3192,0.523046,16.7699,17.0328,17.1553,17.4414,19.5456
+Floyd-Warshall,Bipartito Completo,Entera,400,80000,39.6627,0.485902,38.9722,39.3672,39.5173,39.8986,41.2824
+Floyd-Warshall,Bipartito Completo,Entera,500,125000,75.0142,0.477092,74.2231,74.7628,74.905,75.274,76.3875
+Floyd-Warshall,Bipartito Completo,Entera,600,180000,127.398,0.696411,126.041,126.989,127.346,127.577,129.329
+Floyd-Warshall,Bipartito Completo,Entera,700,245000,200.592,1.04269,198.831,199.869,200.514,201.077,203.365
+Floyd-Warshall,Bipartito Completo,Entera,800,320000,297.409,3.37952,294.363,295.152,296.266,298.465,310.097
+Floyd-Warshall,Bipartito Completo,Entera,900,405000,419.041,3.01117,415.273,417.291,418.154,419.582,428.949
+Floyd-Warshall,Bipartito Completo,Entera,1000,500000,568.811,4.51009,564.933,566.345,567.27,568.961,584.806

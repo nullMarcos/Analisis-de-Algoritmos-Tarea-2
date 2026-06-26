@@ -1,0 +1,11 @@
+algoritmo,tipo_grafo,distribucion,n,m,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4
+Bellman-Ford,Componentes FC Ciclo Negativo,Decimal,100,381,1.48639,0.0754385,1.43964,1.45642,1.46222,1.47196,1.77211
+Bellman-Ford,Componentes FC Ciclo Negativo,Decimal,200,1111,18.0685,0.0341796,17.9989,18.0577,18.0663,18.0813,18.1923
+Bellman-Ford,Componentes FC Ciclo Negativo,Decimal,300,2190,12.5538,0.115331,12.3174,12.4859,12.5462,12.6447,12.7863
+Bellman-Ford,Componentes FC Ciclo Negativo,Decimal,400,3559,43.0544,0.386924,42.3589,42.7613,43.091,43.3301,43.7066
+Bellman-Ford,Componentes FC Ciclo Negativo,Decimal,500,5236,764.414,7.65744,750.005,758.627,764.784,766.954,790.036
+Bellman-Ford,Componentes FC Ciclo Negativo,Decimal,600,7354,511.605,6.05215,497.447,509.152,512.228,514.686,523.471
+Bellman-Ford,Componentes FC Ciclo Negativo,Decimal,700,9675,410.379,2.31343,405.703,408.168,410.643,412.268,413.489
+Bellman-Ford,Componentes FC Ciclo Negativo,Decimal,800,12491,2320.95,8.36054,2307.3,2313.9,2321.65,2328.38,2333.21
+Bellman-Ford,Componentes FC Ciclo Negativo,Decimal,900,15335,2233.75,7.82002,2221.67,2226.31,2234.8,2240.82,2250.65
+Bellman-Ford,Componentes FC Ciclo Negativo,Decimal,1000,18982,4860.39,116.894,4722.07,4738.25,4917.72,4973.69,4984.16

@@ -1,0 +1,11 @@
+algoritmo,tipo_grafo,distribucion,n,m,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4
+Floyd-Warshall,Bipartito Completo,Decimal,100,5000,0.754118,0.0552516,0.707508,0.72009,0.724716,0.776993,0.933957
+Floyd-Warshall,Bipartito Completo,Decimal,200,20000,5.29543,0.126064,5.07191,5.19321,5.29246,5.40096,5.55064
+Floyd-Warshall,Bipartito Completo,Decimal,300,45000,17.3224,0.513778,16.7674,17.0065,17.2392,17.4431,19.3943
+Floyd-Warshall,Bipartito Completo,Decimal,400,80000,39.5984,0.485969,38.9221,39.2771,39.536,39.7451,41.0337
+Floyd-Warshall,Bipartito Completo,Decimal,500,125000,76.0515,1.12868,74.2117,75.2052,75.9041,76.9751,78.228
+Floyd-Warshall,Bipartito Completo,Decimal,600,180000,128.354,0.841601,127.201,127.748,128.236,128.626,131.123
+Floyd-Warshall,Bipartito Completo,Decimal,700,245000,200.336,0.626157,199.334,199.898,200.352,200.645,202.506
+Floyd-Warshall,Bipartito Completo,Decimal,800,320000,300.565,2.22067,297.496,299.328,300.529,301.492,309.228
+Floyd-Warshall,Bipartito Completo,Decimal,900,405000,419.771,1.19442,417.787,418.946,419.627,420.409,422.594
+Floyd-Warshall,Bipartito Completo,Decimal,1000,500000,572.379,3.4362,568.838,570.012,571.048,573.178,580.365

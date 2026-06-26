@@ -1,13 +1,17 @@
 #!/bin/bash
 
-tipo_grafos=("BIPARTITO_COMPLETO" "ARBOL_BINARIO" "COMPONENTES_FC_CICLO_NEGATIVO")
+tipo_grafos=("ARBOL_BINARIO" "COMPONENTES_FC_CICLO_NEGATIVO" "BIPARTITO_COMPLETO")
 distribucion_pesos=("DECIMAL" "ENTERA")
-algoritmos=("BELLMANFORD" "FLOYD_WARSHALL")
+algoritmos=("FLOYD_WARSHALL" "BELLMANFORD")
 
 for tipo_grafo in "${tipo_grafos[@]}"; do
     for algoritmo in "${algoritmos[@]}"; do
         for distribucion in "${distribucion_pesos[@]}"; do
-            ./uhr/uhr resultados/csv/resultados_"$tipo_grafo"_"$distribucion"_"$algoritmo".csv 4 300 300 100 "$tipo_grafo" "$algoritmo" "$distribucion"
+            if [ "$tipo_grafo" == "BIPARTITO_COMPLETO" ] && [ "$algoritmo" == "BELLMANFORD" ]; then
+                ./uhr/uhr resultados/csv/resultados_"$tipo_grafo"_"$distribucion"_"$algoritmo".csv 32 100 300 100 "$tipo_grafo" "$algoritmo" "$distribucion"
+            else
+                ./uhr/uhr resultados/csv/resultados_"$tipo_grafo"_"$distribucion"_"$algoritmo".csv 32 100 1000 100 "$tipo_grafo" "$algoritmo" "$distribucion"
+            fi
         done
     done
 done

@@ -1,0 +1,4 @@
+algoritmo,tipo_grafo,distribucion,n,m,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4
+Bellman-Ford,Bipartito Completo,Decimal,100,5000,87.9904,0.914804,86.5695,87.2835,87.6719,88.8119,89.6679
+Bellman-Ford,Bipartito Completo,Decimal,200,20000,3420.94,5.60914,3410.77,3417.16,3419.15,3424.64,3433.7
+Bellman-Ford,Bipartito Completo,Decimal,300,45000,21326.2,209.513,20670.9,21317.7,21392.9,21449.2,21556.9

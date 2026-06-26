@@ -1,0 +1,11 @@
+algoritmo,tipo_grafo,distribucion,n,m,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4
+Floyd-Warshall,Árbol Binario,Decimal,100,99,0.120904,0.0185828,0.107754,0.112741,0.113514,0.119787,0.201251
+Floyd-Warshall,Árbol Binario,Decimal,200,199,0.424247,0.0345028,0.406669,0.410374,0.412345,0.417855,0.576861
+Floyd-Warshall,Árbol Binario,Decimal,300,299,1.00685,0.0549692,0.981386,0.990445,0.993919,1.00245,1.29693
+Floyd-Warshall,Árbol Binario,Decimal,400,399,1.85964,0.0456546,1.82723,1.8378,1.84543,1.85272,2.02827
+Floyd-Warshall,Árbol Binario,Decimal,500,499,2.96719,0.0600605,2.91672,2.9344,2.94806,2.9732,3.17893
+Floyd-Warshall,Árbol Binario,Decimal,600,599,4.4403,0.184572,4.27402,4.33499,4.36409,4.44408,4.94638
+Floyd-Warshall,Árbol Binario,Decimal,700,699,6.04585,0.119285,5.85697,5.9525,6.03768,6.11589,6.31088
+Floyd-Warshall,Árbol Binario,Decimal,800,799,8.11105,0.154486,7.86694,7.97403,8.11242,8.2062,8.45916
+Floyd-Warshall,Árbol Binario,Decimal,900,899,10.6776,0.290239,10.2131,10.4985,10.5712,10.8193,11.4882
+Floyd-Warshall,Árbol Binario,Decimal,1000,999,13.6849,0.318115,13.124,13.4001,13.7138,13.891,14.5573

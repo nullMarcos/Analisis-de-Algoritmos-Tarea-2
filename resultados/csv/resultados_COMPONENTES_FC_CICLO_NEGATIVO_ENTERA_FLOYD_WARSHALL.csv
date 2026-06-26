@@ -1,0 +1,11 @@
+algoritmo,tipo_grafo,distribucion,n,m,t_mean,t_stdev,t_Q0,t_Q1,t_Q2,t_Q3,t_Q4
+Floyd-Warshall,Componentes FC Ciclo Negativo,Entera,100,376,0.417749,0.0137353,0.408652,0.410857,0.413341,0.415731,0.4709
+Floyd-Warshall,Componentes FC Ciclo Negativo,Entera,200,1098,3.28449,0.0161528,3.26553,3.27245,3.28175,3.29208,3.3257
+Floyd-Warshall,Componentes FC Ciclo Negativo,Entera,300,2147,10.963,0.0429459,10.8679,10.9367,10.9639,10.9852,11.0491
+Floyd-Warshall,Componentes FC Ciclo Negativo,Entera,400,3517,26.1375,0.10925,26.0027,26.0634,26.1161,26.1706,26.4418
+Floyd-Warshall,Componentes FC Ciclo Negativo,Entera,500,5333,51.6205,0.165541,51.2947,51.5347,51.605,51.7002,52.058
+Floyd-Warshall,Componentes FC Ciclo Negativo,Entera,600,7259,88.7255,0.591252,86.7983,88.6483,88.8923,89.1099,89.6919
+Floyd-Warshall,Componentes FC Ciclo Negativo,Entera,700,9859,139.305,0.514415,138.399,138.901,139.314,139.496,140.847
+Floyd-Warshall,Componentes FC Ciclo Negativo,Entera,800,12342,208.54,1.68257,206.261,207.703,208.32,208.987,214.963
+Floyd-Warshall,Componentes FC Ciclo Negativo,Entera,900,15511,294.971,1.3039,292.399,293.923,294.597,296.157,297.659
+Floyd-Warshall,Componentes FC Ciclo Negativo,Entera,1000,18862,405.059,1.86016,400.772,404.377,405.013,405.597,409.519
