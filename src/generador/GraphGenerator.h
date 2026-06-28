@@ -33,9 +33,9 @@ Graph<T> fabricar_grafo(TipoGrafo tipo, int n, DistribucionPesos distribucion) {
     // Instanciamos el grafo con n nodos
     Graph<T> grafo(n);
 
-    // Configuración para generar pesos aleatorios
-    std::random_device rd;
-    std::mt19937 gen(rd());
+    // Configuración para generar pesos aleatorios con una seed determinista
+    // basada en n para garantizar que ambos algoritmos evalúen el mismo grafo
+    std::mt19937 gen(1337 + n);
     
     // Genera un 0 o un 1
     std::uniform_int_distribution<int> dis_signo(0, 1);
