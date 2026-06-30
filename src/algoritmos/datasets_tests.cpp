@@ -60,7 +60,7 @@ int main(int argc, char* argv[]){
     bool succes = true;
     APSPResult<double> bf_res;
     if(algorithm == "fw"){
-        auto fw_res = floyd_warshall(graph, inf);
+        auto fw_res = floyd_warshall(graph, inf, true);
         matrix = fw_res.dist;
         next_node = fw_res.next_node;
         succes = fw_res.succes;
